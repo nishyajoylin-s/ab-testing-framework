@@ -31,14 +31,14 @@ st.set_page_config(
 st.title("💡 Should I test this?")
 st.caption(
     "Before you run an A/B test, make sure you should. "
-    "A/B tests cost time and traffic — this page routes your idea to the right method."
+    "A/B tests cost time and traffic. This page routes your idea to the right method."
 )
 
 # ── Ollama status ──────────────────────────────────────────────────────────────
 ollama_ok, ollama_msg = check_ollama_available()
 if not ollama_ok:
     st.warning(
-        f"LLM recommendation unavailable — {ollama_msg}. "
+        f"LLM recommendation unavailable: {ollama_msg}. "
         "You can still use the routing checklist below."
     )
 
@@ -54,7 +54,7 @@ with col1:
         "What are you changing?",
         placeholder="e.g. Move the checkout button above the fold on the product page.",
         height=100,
-        help="Be specific — 'redesign checkout' is too vague, "
+        help="Be specific: 'redesign checkout' is too vague, "
              "'move the CTA above the fold on mobile' is right.",
     )
 
@@ -64,7 +64,7 @@ with col2:
         placeholder="e.g. 70% of users who add to cart never complete checkout. "
                     "Eye-tracking shows most don't scroll far enough to see the button.",
         height=100,
-        help="The problem is what you're measuring against — "
+        help="The problem is what you're measuring against, "
              "not what you hope the feature does.",
     )
 
@@ -91,7 +91,7 @@ st.divider()
 # ── Section 2: Routing checklist ───────────────────────────────────────────────
 st.subheader("2 · Quick routing check")
 st.caption(
-    "Answer honestly — this shapes the recommendation. "
+    "Answer honestly. This shapes the recommendation. "
     "If you're not sure, that's a signal too."
 )
 
@@ -103,7 +103,7 @@ with q1:
         "Stakeholders need statistical proof before we ship",
         value=False,
         help="If a director, legal, or a data review board needs to see a p-value "
-             "before approving the rollout — toggle this on.",
+             "before approving the rollout, toggle this on.",
     )
 
 with q2:
@@ -111,7 +111,7 @@ with q2:
         "This is primarily a UX or visual change",
         value=False,
         help="Redesigns, layout changes, copy changes. "
-             "These often need user testing first — can users even find what they need?",
+             "These often need user testing first. Can users even find what they need?",
     )
 
 with q3:
@@ -145,7 +145,7 @@ if not primary_metric.strip():
     missing.append("the primary success metric")
 
 if missing:
-    st.info(f"Fill in: {', '.join(missing)} — then click the button below.")
+    st.info(f"Fill in: {', '.join(missing)}. Then click the button below.")
     st.stop()
 
 if not ollama_ok:

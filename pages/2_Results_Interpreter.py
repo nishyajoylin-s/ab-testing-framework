@@ -36,7 +36,7 @@ st.caption(
 # ── Ollama status ─────────────────────────────────────────────────────────────
 ollama_ok, ollama_msg = check_ollama_available()
 if not ollama_ok:
-    st.warning(f"LLM verdict unavailable — {ollama_msg}. "
+    st.warning(f"LLM verdict unavailable: {ollama_msg}. "
                "Statistics will still run normally.")
 
 
@@ -86,7 +86,7 @@ with s2:
 with s3:
     use_mde = st.checkbox("I set a pre-committed MDE", value=True,
                           help="If you defined an MDE before the test, enter it here. "
-                               "This is the most important check — did the result meet your bar?")
+                               "This is the most important check: did the result meet your bar?")
     if use_mde:
         mde_type = st.radio("MDE type", ["Relative (%)", "Absolute (pp)"],
                             horizontal=True, key="mde_type_r")
@@ -134,7 +134,7 @@ if srm.srm_detected:
         "🚨 **Sample Ratio Mismatch detected** (p < 0.01). "
         "The traffic split is not what you intended. "
         "This usually means a bug in the randomisation or tracking. "
-        "**Do not interpret the results below — fix the implementation first.**"
+        "**Do not interpret the results below. Fix the implementation first.**"
     )
 else:
     st.success("✅ No SRM detected. Traffic split looks as expected.")
@@ -188,7 +188,7 @@ with left:
     if f_res.significant:
         st.success(
             f"p = {f_res.p_value:.4f} < {alpha}. "
-            "The result is statistically significant — unlikely to be random noise."
+            "The result is statistically significant, unlikely to be random noise."
         )
     else:
         st.info(
@@ -284,13 +284,13 @@ with b_right:
     prob_pct = b_res.prob_b_beats_a * 100
     if prob_pct >= 95:
         interpretation = (
-            f"Very strong evidence — there is a **{prob_pct:.1f}% probability** "
+            f"Very strong evidence. There is a **{prob_pct:.1f}% probability** "
             "that Variant B is genuinely better. "
             "If you're a product team moving fast, this is a strong signal to ship."
         )
     elif prob_pct >= 80:
         interpretation = (
-            f"Moderate evidence — **{prob_pct:.1f}% probability** that Variant B "
+            f"Moderate evidence: **{prob_pct:.1f}% probability** that Variant B "
             "is better, but 1 in 5 chance we're wrong. "
             "Consider running longer for higher confidence."
         )
@@ -301,18 +301,18 @@ with b_right:
         )
     else:
         interpretation = (
-            f"Weak evidence — only **{prob_pct:.1f}% probability** "
+            f"Weak evidence. Only **{prob_pct:.1f}% probability** "
             "that Variant B is better. Inconclusive. Don't ship."
         )
     st.info(interpretation)
 
     st.markdown("**When to use Bayesian vs Frequentist:**")
     st.markdown(
-        "- **Frequentist** — when false positive rate has a defined business or legal meaning "
+        "- **Frequentist**: when false positive rate has a defined business or legal meaning "
         "(finance, healthcare, regulated industries).\n"
-        "- **Bayesian** — when you want to make decisions faster and can tolerate some "
+        "- **Bayesian**: when you want to make decisions faster and can tolerate some "
         "uncertainty. Better for product teams iterating quickly.\n"
-        "- **Show both** — they answer different questions. Use frequentist to *decide*, "
+        "- **Show both**: they answer different questions. Use frequentist to *decide*, "
         "Bayesian to *understand*."
     )
 
@@ -322,7 +322,7 @@ st.divider()
 st.subheader("4 · Plain-English verdict")
 st.caption(
     "The LLM reads the statistics above and writes a recommendation any PM can act on. "
-    "It doesn't do the maths — it translates the maths into a decision."
+    "It reads the statistics and translates them into a decision."
 )
 
 if not ollama_ok:

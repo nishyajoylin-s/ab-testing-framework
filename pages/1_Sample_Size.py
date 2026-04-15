@@ -65,7 +65,7 @@ with col1:
 
     if mde_type == "Relative":
         mde_pct = st.slider(
-            "Minimum Detectable Effect — relative (%)",
+            "Minimum Detectable Effect (relative, %)",
             min_value=1.0, max_value=50.0, value=_default_mde_pct, step=1.0,
             help="Smallest lift you care about detecting. Smaller = needs more samples.",
         )
@@ -73,7 +73,7 @@ with col1:
         mde_kind = "relative"
     else:
         mde_pp = st.slider(
-            "Minimum Detectable Effect — absolute (pp)",
+            "Minimum Detectable Effect (absolute, pp)",
             min_value=0.1, max_value=10.0, value=1.0, step=0.1,
             help="Smallest absolute change in conversion rate you care about.",
         )
@@ -115,7 +115,7 @@ with col2:
     n_tails = 1 if tails == "One-sided" else 2
 
     daily_traffic = st.number_input(
-        "Daily visitors (optional — for runtime estimate)",
+        "Daily visitors (optional, for runtime estimate)",
         min_value=0, value=0, step=100,
         help="Total daily visitors split across both variants. Leave 0 to skip.",
     )
@@ -162,7 +162,7 @@ elif result:
     if result.estimated_days:
         d3.metric("Estimated runtime", f"{result.estimated_days:.1f} days")
     else:
-        d3.metric("Estimated runtime", "— (enter daily traffic)")
+        d3.metric("Estimated runtime", "(enter daily traffic)")
 
     # ── explanation box ───────────────────────────────────────────────────────
     with st.expander("What does this mean? (plain English)"):
@@ -223,8 +223,8 @@ Z_β cuts off the bottom {100-power_pct}%.)*
             )
             st.plotly_chart(fig1, use_container_width=True)
             st.caption(
-                "Detecting smaller effects requires exponentially more samples — "
-                "be honest about the smallest lift that would actually change a business decision."
+                "Detecting smaller effects requires exponentially more samples. "
+                "Be honest about the smallest lift that would actually change a business decision."
             )
 
     # Chart 2: n vs power (how sure do you want to be?)
