@@ -20,17 +20,19 @@ import streamlit as st
 import stats.frequentist as freq
 import stats.bayesian    as bayes
 from llm.verdict import VerdictInput, rule_verdict
+from ui import inject_css, page_header
 
 st.set_page_config(page_title="Results Interpreter", page_icon="📊", layout="wide")
 
-DARK = dict(plot_bgcolor="#0e1117", paper_bgcolor="#0e1117", font_color="#fafafa")
+inject_css()
 
+DARK = dict(plot_bgcolor="#0b0f1a", paper_bgcolor="#0b0f1a", font_color="#c8d3e8",
+            font=dict(family="sans-serif"))
 
-# ── header ────────────────────────────────────────────────────────────────────
-st.title("📊 Results Interpreter")
-st.caption(
-    "Paste your experiment results and get a full statistical analysis + "
-    "a plain-English recommendation."
+page_header(
+    2, "📊", "Results Interpreter",
+    "Enter your observed results and get a full analysis — SRM check, frequentist, "
+    "Bayesian, and a plain-English verdict that enforces your pre-committed MDE."
 )
 
 
@@ -338,17 +340,48 @@ verdict = rule_verdict(VerdictInput(
     srm_detected=srm.srm_detected,
 ))
 
-if verdict.decision == "SHIP":
-    st.success(f"**{verdict.decision}** · {verdict.headline}")
-elif verdict.decision == "INCONCLUSIVE":
-    st.warning(f"**{verdict.decision}** · {verdict.headline}")
-else:
-    st.error(f"**{verdict.decision}** · {verdict.headline}")
+_DECISION_STYLES = {
+    "SHIP":        ("✅", "#10b981", "rgba(16,185,129,0.1)",  "rgba(16,185,129,0.25)"),
+    "DO NOT SHIP": ("🚫", "#ef4444", "rgba(239,68,68,0.1)",   "rgba(239,68,68,0.25)"),
+    "INCONCLUSIVE":("⚠️",  "#f59e0b", "rgba(245,158,11,0.1)",  "rgba(245,158,11,0.25)"),
+    "INVALIDATE":  ("🚨", "#ef4444", "rgba(239,68,68,0.1)",   "rgba(239,68,68,0.25)"),
+}
+icon, color, bg, border_color = _DECISION_STYLES.get(
+    verdict.decision, ("●", "#6b7fa3", "rgba(107,127,163,0.1)", "rgba(107,127,163,0.25)")
+)
 
-v1, v2 = st.columns(2)
-with v1:
-    st.markdown("**What happened**")
-    st.markdown(verdict.what_happened)
-with v2:
-    st.markdown("**Watch out for**")
-    st.markdown(verdict.watch_out_for)
+st.markdown(f"""
+<div style="background:{bg};border:1px solid {border_color};border-radius:12px;
+            padding:1.4rem 1.6rem;margin-bottom:1rem;">
+    <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;
+                text-transform:uppercase;color:{color};margin-bottom:0.5rem;">
+        {icon} Decision
+    </div>
+    <div style="font-size:1.1rem;font-weight:700;color:#f1f5f9;line-height:1.4;">
+        {verdict.decision} · {verdict.headline}
+    </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+    <div style="background:#131929;border:1px solid rgba(255,255,255,0.07);
+                border-radius:10px;padding:1.25rem;">
+        <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;
+                    text-transform:uppercase;color:#6b7fa3;margin-bottom:0.6rem;">
+            What happened
+        </div>
+        <div style="font-size:0.88rem;color:#c8d3e8;line-height:1.65;">
+            {verdict.what_happened}
+        </div>
+    </div>
+    <div style="background:#131929;border:1px solid rgba(255,255,255,0.07);
+                border-radius:10px;padding:1.25rem;">
+        <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;
+                    text-transform:uppercase;color:#6b7fa3;margin-bottom:0.6rem;">
+            Watch out for
+        </div>
+        <div style="font-size:0.88rem;color:#c8d3e8;line-height:1.65;">
+            {verdict.watch_out_for}
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)

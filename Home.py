@@ -1,7 +1,5 @@
-"""
-A/B Testing Framework — home page.
-"""
 import streamlit as st
+from ui import inject_css
 
 st.set_page_config(
     page_title="A/B Testing Framework",
@@ -10,50 +8,168 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-st.title("🧪 A/B Testing Framework")
-st.caption(
-    "The tool that prevents bad experiments, not just analyses them. "
-    "Every other tool starts after you've collected the data. This one starts before."
+inject_css()
+
+# ── Sidebar branding ──────────────────────────────────────────────────────────
+st.sidebar.markdown(
+    '<div style="padding:0.5rem 0 1.5rem 0;">'
+    '<div style="font-size:0.7rem;font-weight:700;letter-spacing:0.12em;'
+    'color:#f5c518;text-transform:uppercase;margin-bottom:0.3rem;">A/B Testing</div>'
+    '<div style="font-size:1rem;font-weight:700;color:#f1f5f9;">Framework</div>'
+    '</div>',
+    unsafe_allow_html=True,
 )
 
+# ── Hero ──────────────────────────────────────────────────────────────────────
 st.markdown("""
----
+<div style="padding: 2rem 0 2.5rem 0;">
+    <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.14em;
+                color:#f5c518;text-transform:uppercase;margin-bottom:1rem;">
+        Experiment Design Tool
+    </div>
+    <h1 style="font-size:3rem;font-weight:800;line-height:1.12;
+               color:#f1f5f9;margin:0 0 1.1rem 0;">
+        Stop guessing.<br>Start testing right.
+    </h1>
+    <p style="font-size:1.05rem;color:#6b7fa3;max-width:540px;
+              line-height:1.75;margin:0;">
+        The only A/B testing tool that starts before your first user is assigned
+        to a variant. Guided, opinionated, and built around how experiments
+        actually fail.
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
-### How it works
+# ── Step cards ────────────────────────────────────────────────────────────────
+CARD = (
+    'background:#131929;border:1px solid rgba(255,255,255,0.07);'
+    'border-radius:12px;padding:1.6rem;height:100%;'
+)
+STEP_LABEL = (
+    'font-size:0.68rem;font-weight:700;letter-spacing:0.1em;'
+    'color:#f5c518;text-transform:uppercase;margin-bottom:0.85rem;'
+)
+CARD_ICON  = 'font-size:1.6rem;margin-bottom:0.75rem;'
+CARD_TITLE = 'font-size:1.05rem;font-weight:700;color:#f1f5f9;margin-bottom:0.5rem;'
+CARD_DESC  = 'font-size:0.87rem;color:#6b7fa3;line-height:1.65;'
 
-Most A/B test mistakes happen before a single user is assigned to a variant.
-This framework covers the full lifecycle:
+c0, c1, mid, c2 = st.columns([3, 3, 1, 3])
 
-| Step | Module | What it answers |
-|------|--------|-----------------|
-| **0** | **Should I test this?** | Is an A/B test even the right tool? Or user testing? Or just ship it? |
-| **1** | **Sample Size Calculator** | How many users do I need before I can trust my results? |
-| *test runs* | | *(nothing in the tool, go run your experiment)* |
-| **2** | **Results Interpreter** | Is this significant? Should I ship? What does it mean? |
+with c0:
+    st.markdown(f"""
+    <div style="{CARD}">
+        <div style="{STEP_LABEL}">Step 0</div>
+        <div style="{CARD_ICON}">💡</div>
+        <div style="{CARD_TITLE}">Should I test this?</div>
+        <div style="{CARD_DESC}">
+            Route your idea to the right method — A/B test, user test,
+            feature flag, or just ship. If testing is right, generates
+            a full experiment brief for PM, Designer, and Engineer.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
----
+with c1:
+    st.markdown(f"""
+    <div style="{CARD}">
+        <div style="{STEP_LABEL}">Step 1</div>
+        <div style="{CARD_ICON}">📐</div>
+        <div style="{CARD_TITLE}">How many users do I need?</div>
+        <div style="{CARD_DESC}">
+            Power analysis that forces you to commit to your hypothesis
+            before collecting data. Sensitivity curves show the cost of
+            every assumption you make.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-### Start here → Step 0
+with mid:
+    st.markdown(
+        '<div style="display:flex;align-items:center;justify-content:center;'
+        'height:100%;color:#1e2d4a;font-size:1.5rem;padding-top:2rem;">›</div>',
+        unsafe_allow_html=True,
+    )
 
-If you have a feature idea but aren't sure whether to test it:
-navigate to **"Should I test this?"** in the sidebar.
+with c2:
+    st.markdown(f"""
+    <div style="{CARD}">
+        <div style="{STEP_LABEL}">Step 2</div>
+        <div style="{CARD_ICON}">📊</div>
+        <div style="{CARD_TITLE}">What do the results mean?</div>
+        <div style="{CARD_DESC}">
+            SRM check, frequentist analysis, Bayesian analysis, and a
+            plain-English verdict — all in one view. Enforces the
+            pre-committed MDE as the actual business gate.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-It takes 2 minutes, routes your idea to the right method,
-and, if A/B testing is correct, generates a Confluence-ready experiment brief.
+st.markdown("<div style='height:2rem'></div>", unsafe_allow_html=True)
 
----
+# ── CTA ───────────────────────────────────────────────────────────────────────
+_, cta_col, _ = st.columns([1, 2, 1])
+with cta_col:
+    st.info("**Start with Step 0** in the sidebar — it takes 2 minutes and prevents the most expensive A/B test mistakes.")
 
-### The philosophy
+# ── Divider ───────────────────────────────────────────────────────────────────
+st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+st.divider()
 
-> "If you torture the data long enough, it will confess to anything." by Ronald Coase
+# ── Why this approach ─────────────────────────────────────────────────────────
+st.markdown(
+    '<h3 style="font-size:1.1rem;font-weight:700;color:#c8d3e8;margin-bottom:1.5rem;">'
+    'Why most A/B tests fail before the data is collected</h3>',
+    unsafe_allow_html=True,
+)
 
-The most common A/B test mistakes aren't statistical, they're upstream:
-- Testing before you have a clear hypothesis
-- Running a test that's too small to detect a realistic effect
-- Stopping early when results "look good"
-- Misreading a statistically significant but practically meaningless lift
+f1, f2, f3, f4 = st.columns(4)
 
-This framework catches each of these at the right moment.
-""")
+FAIL_CARD = (
+    'background:#0f1520;border:1px solid rgba(255,255,255,0.05);'
+    'border-radius:10px;padding:1.1rem 1.25rem;'
+)
+FAIL_NUM  = 'font-size:1.4rem;font-weight:800;color:#f5c518;margin-bottom:0.4rem;'
+FAIL_TEXT = 'font-size:0.84rem;color:#6b7fa3;line-height:1.6;'
 
-st.info("Start with **Step 0: Should I test this?** in the sidebar.")
+with f1:
+    st.markdown(f"""
+    <div style="{FAIL_CARD}">
+        <div style="{FAIL_NUM}">01</div>
+        <div style="{FAIL_TEXT}">Testing before you have a clear, falsifiable hypothesis</div>
+    </div>""", unsafe_allow_html=True)
+
+with f2:
+    st.markdown(f"""
+    <div style="{FAIL_CARD}">
+        <div style="{FAIL_NUM}">02</div>
+        <div style="{FAIL_TEXT}">Running too small to detect a realistic effect</div>
+    </div>""", unsafe_allow_html=True)
+
+with f3:
+    st.markdown(f"""
+    <div style="{FAIL_CARD}">
+        <div style="{FAIL_NUM}">03</div>
+        <div style="{FAIL_TEXT}">Stopping early when results "look good" (peeking)</div>
+    </div>""", unsafe_allow_html=True)
+
+with f4:
+    st.markdown(f"""
+    <div style="{FAIL_CARD}">
+        <div style="{FAIL_NUM}">04</div>
+        <div style="{FAIL_TEXT}">Shipping a significant-but-below-MDE result as a win</div>
+    </div>""", unsafe_allow_html=True)
+
+st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
+
+# ── Quote ─────────────────────────────────────────────────────────────────────
+st.markdown("""
+<div style="border-left:3px solid #f5c518;padding:0.75rem 1.5rem;
+            margin:1.5rem 0;background:rgba(245,197,24,0.04);border-radius:0 8px 8px 0;">
+    <div style="font-size:1rem;color:#c8d3e8;font-style:italic;line-height:1.7;">
+        "If you torture the data long enough, it will confess to anything."
+    </div>
+    <div style="font-size:0.78rem;color:#4a6080;margin-top:0.4rem;font-weight:600;">
+        — Ronald Coase
+    </div>
+</div>
+""", unsafe_allow_html=True)

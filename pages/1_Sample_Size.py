@@ -13,16 +13,20 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from stats.sample_size import calculate, sensitivity_curve, power_curve
+from ui import inject_css, page_header
 
 # ── page config ───────────────────────────────────────────────────────────────
 st.set_page_config(page_title="Sample Size Calculator", page_icon="📐", layout="wide")
 
-DARK = dict(plot_bgcolor="#0e1117", paper_bgcolor="#0e1117", font_color="#fafafa")
+inject_css()
 
-st.title("📐 Sample Size Calculator")
-st.caption(
-    "Design your experiment before you run it. "
-    "Setting these numbers upfront prevents the most common A/B test mistakes."
+DARK = dict(plot_bgcolor="#0b0f1a", paper_bgcolor="#0b0f1a", font_color="#c8d3e8",
+            font=dict(family="sans-serif"))
+
+page_header(
+    1, "📐", "Sample Size Calculator",
+    "Set your experiment parameters before collecting data. "
+    "Committing to these numbers upfront is what separates a valid test from a fishing expedition."
 )
 
 # ── prefill from idea validator ───────────────────────────────────────────────

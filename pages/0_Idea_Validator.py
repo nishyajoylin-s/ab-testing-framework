@@ -20,6 +20,7 @@ import streamlit as st
 from llm.idea_validator import (
     IdeaInput, validate_idea, check_llm_available, parse_route
 )
+from ui import inject_css, page_header
 
 # Groq key: set via Streamlit Cloud secrets (key: GROQ_API_KEY) or env var
 _groq_key = ""
@@ -34,11 +35,12 @@ st.set_page_config(
     layout="wide",
 )
 
-# ── header ─────────────────────────────────────────────────────────────────────
-st.title("💡 Should I test this?")
-st.caption(
+inject_css()
+
+page_header(
+    0, "💡", "Should I test this?",
     "Before you run an A/B test, make sure you should. "
-    "A/B tests cost time and traffic. This page routes your idea to the right method."
+    "A/B tests cost time and traffic — this page routes your idea to the right method."
 )
 
 # ── LLM status ─────────────────────────────────────────────────────────────────
