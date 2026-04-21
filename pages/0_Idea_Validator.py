@@ -18,8 +18,15 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import streamlit as st
 from llm.idea_validator import (
-    IdeaInput, validate_idea, check_ollama_available, parse_route
+    IdeaInput, validate_idea, check_llm_available, parse_route
 )
+
+# Groq key: set via Streamlit Cloud secrets (key: GROQ_API_KEY) or env var
+_groq_key = ""
+try:
+    _groq_key = st.secrets.get("GROQ_API_KEY", "") or os.environ.get("GROQ_API_KEY", "")
+except Exception:
+    _groq_key = os.environ.get("GROQ_API_KEY", "")
 
 st.set_page_config(
     page_title="Should I test this?",
@@ -34,13 +41,10 @@ st.caption(
     "A/B tests cost time and traffic. This page routes your idea to the right method."
 )
 
-# ── Ollama status ──────────────────────────────────────────────────────────────
-ollama_ok, ollama_msg = check_ollama_available()
-if not ollama_ok:
-    st.warning(
-        f"LLM recommendation unavailable: {ollama_msg}. "
-        "You can still use the routing checklist below."
-    )
+# ── LLM status ─────────────────────────────────────────────────────────────────
+llm_ok, llm_msg = check_llm_available(_groq_key)
+if not llm_ok:
+    st.warning(f"LLM unavailable: {llm_msg}")
 
 st.divider()
 
@@ -148,8 +152,8 @@ if missing:
     st.info(f"Fill in: {', '.join(missing)}. Then click the button below.")
     st.stop()
 
-if not ollama_ok:
-    st.warning(f"LLM unavailable: {ollama_msg}")
+if not llm_ok:
+    st.warning(f"LLM unavailable: {llm_msg}")
 else:
     if st.button("Analyse this idea", type="primary", use_container_width=False):
         idea = IdeaInput(
@@ -164,8 +168,8 @@ else:
             target_audience=target_audience.strip(),
         )
 
-        with st.spinner("Thinking... (~10-20s)"):
-            result_text, err = validate_idea(idea)
+        with st.spinner("Thinking... (~5-15s)"):
+            result_text, err = validate_idea(idea, groq_api_key=_groq_key)
 
         if err:
             st.error(f"LLM error: {err}")

@@ -19,7 +19,7 @@ import streamlit as st
 
 import stats.frequentist as freq
 import stats.bayesian    as bayes
-from llm.verdict import VerdictInput, get_verdict, check_ollama_available
+from llm.verdict import VerdictInput, rule_verdict
 
 st.set_page_config(page_title="Results Interpreter", page_icon="📊", layout="wide")
 
@@ -32,12 +32,6 @@ st.caption(
     "Paste your experiment results and get a full statistical analysis + "
     "a plain-English recommendation."
 )
-
-# ── Ollama status ─────────────────────────────────────────────────────────────
-ollama_ok, ollama_msg = check_ollama_available()
-if not ollama_ok:
-    st.warning(f"LLM verdict unavailable: {ollama_msg}. "
-               "Statistics will still run normally.")
 
 
 # ── inputs ────────────────────────────────────────────────────────────────────
@@ -318,69 +312,43 @@ with b_right:
 
 st.divider()
 
-# ── 4. LLM VERDICT ────────────────────────────────────────────────────────────
-st.subheader("4 · Plain-English verdict")
-st.caption(
-    "The LLM reads the statistics above and writes a recommendation any PM can act on. "
-    "It reads the statistics and translates them into a decision."
-)
+# ── 4. VERDICT ────────────────────────────────────────────────────────────────
+st.subheader("4 · Verdict")
 
-if not ollama_ok:
-    st.warning(f"LLM unavailable: {ollama_msg}")
+verdict = rule_verdict(VerdictInput(
+    experiment_name=exp_name,
+    hypothesis=hypothesis,
+    n_control=n_control,
+    conv_control=conv_control,
+    n_variant=n_variant,
+    conv_variant=conv_variant,
+    rate_control=f_res.rate_control,
+    rate_variant=f_res.rate_variant,
+    absolute_lift=f_res.absolute_lift,
+    relative_lift=f_res.relative_lift,
+    p_value=f_res.p_value,
+    ci_lower=f_res.ci_lower,
+    ci_upper=f_res.ci_upper,
+    significant=f_res.significant,
+    alpha=alpha,
+    prob_b_beats_a=b_res.prob_b_beats_a,
+    expected_loss_if_ship_b=b_res.expected_loss_if_ship_b,
+    mde_absolute=mde_abs,
+    mde_met=f_res.mde_met,
+    srm_detected=srm.srm_detected,
+))
+
+if verdict.decision == "SHIP":
+    st.success(f"**{verdict.decision}** · {verdict.headline}")
+elif verdict.decision == "INCONCLUSIVE":
+    st.warning(f"**{verdict.decision}** · {verdict.headline}")
 else:
-    if st.button("Generate verdict", type="primary"):
-        v_input = VerdictInput(
-            experiment_name=exp_name,
-            hypothesis=hypothesis,
-            n_control=n_control,
-            conv_control=conv_control,
-            n_variant=n_variant,
-            conv_variant=conv_variant,
-            rate_control=f_res.rate_control,
-            rate_variant=f_res.rate_variant,
-            absolute_lift=f_res.absolute_lift,
-            relative_lift=f_res.relative_lift,
-            p_value=f_res.p_value,
-            ci_lower=f_res.ci_lower,
-            ci_upper=f_res.ci_upper,
-            significant=f_res.significant,
-            alpha=alpha,
-            prob_b_beats_a=b_res.prob_b_beats_a,
-            expected_loss_if_ship_b=b_res.expected_loss_if_ship_b,
-            mde_absolute=mde_abs,
-            mde_met=f_res.mde_met,
-            srm_detected=srm.srm_detected,
-        )
+    st.error(f"**{verdict.decision}** · {verdict.headline}")
 
-        with st.spinner("Asking the LLM... (~10-20s depending on model)"):
-            verdict_text, verdict_err = get_verdict(v_input)
-
-        if verdict_err:
-            st.error(f"LLM error: {verdict_err}")
-        else:
-            st.markdown("---")
-            # Parse sections for styled rendering
-            for line in verdict_text.split("\n"):
-                line = line.strip()
-                if not line:
-                    continue
-                if line.startswith("HEADLINE:"):
-                    st.markdown(f"### {line.replace('HEADLINE:', '').strip()}")
-                elif line.startswith("DECISION:"):
-                    decision = line.replace("DECISION:", "").strip()
-                    if "SHIP" in decision.upper() and "NOT" not in decision.upper() and "DO NOT" not in decision.upper():
-                        st.success(f"**Decision:** {decision}")
-                    elif "INCONCLUSIVE" in decision.upper():
-                        st.warning(f"**Decision:** {decision}")
-                    else:
-                        st.error(f"**Decision:** {decision}")
-                elif line.startswith("WHAT HAPPENED:"):
-                    st.markdown(line.replace("WHAT HAPPENED:", "**What happened:**"))
-                elif line.startswith("WATCH OUT FOR:"):
-                    st.markdown(line.replace("WATCH OUT FOR:", "**Watch out for:**"))
-                else:
-                    st.markdown(line)
-
-            st.markdown("---")
-            with st.expander("Copy raw text"):
-                st.code(verdict_text)
+v1, v2 = st.columns(2)
+with v1:
+    st.markdown("**What happened**")
+    st.markdown(verdict.what_happened)
+with v2:
+    st.markdown("**Watch out for**")
+    st.markdown(verdict.watch_out_for)
