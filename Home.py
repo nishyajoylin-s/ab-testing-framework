@@ -43,7 +43,7 @@ st.markdown("""
 # ── Step cards ────────────────────────────────────────────────────────────────
 CARD = (
     'background:#131929;border:1px solid rgba(255,255,255,0.07);'
-    'border-radius:12px;padding:1.6rem;height:100%;'
+    'border-radius:12px;padding:1.6rem;height:100%;min-height:260px;'
 )
 STEP_LABEL = (
     'font-size:0.68rem;font-weight:700;letter-spacing:0.1em;'
@@ -126,7 +126,7 @@ f1, f2, f3, f4 = st.columns(4)
 
 FAIL_CARD = (
     'background:#0f1520;border:1px solid rgba(255,255,255,0.05);'
-    'border-radius:10px;padding:1.1rem 1.25rem;'
+    'border-radius:10px;padding:1.1rem 1.25rem;min-height:100px;'
 )
 FAIL_NUM  = 'font-size:1.4rem;font-weight:800;color:#f5c518;margin-bottom:0.4rem;'
 FAIL_TEXT = 'font-size:0.84rem;color:#6b7fa3;line-height:1.6;'

@@ -142,6 +142,20 @@ hr {
     margin: 1.5rem 0 !important;
 }
 
+/* ── Equal-height columns ──────────────────────────────── */
+[data-testid="stHorizontalBlock"] {
+    align-items: stretch !important;
+}
+[data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+    display: flex !important;
+    flex-direction: column !important;
+}
+[data-testid="stHorizontalBlock"] > [data-testid="stColumn"] > div:first-child {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
 /* ── Charts ────────────────────────────────────────────── */
 [data-testid="stPlotlyChart"] {
     border-radius: 10px;
