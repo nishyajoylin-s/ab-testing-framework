@@ -13,7 +13,7 @@ footer { visibility: hidden; }
 
 /* ── Layout ────────────────────────────────────────────── */
 .block-container {
-    padding-top: 1.75rem !important;
+    padding-top: 4.5rem !important;
     padding-bottom: 4rem !important;
     max-width: 1200px !important;
 }
