@@ -152,148 +152,149 @@ if not primary_metric.strip():
 
 if missing:
     st.info(f"Fill in: {', '.join(missing)}. Then click the button below.")
-    st.stop()
 
 if not llm_ok:
     st.warning(f"LLM unavailable: {llm_msg}")
-else:
-    if st.button("Analyse this idea", type="primary", use_container_width=False):
-        idea = IdeaInput(
-            feature_description=feature_description.strip(),
-            problem_statement=problem_statement.strip(),
-            primary_metric=primary_metric.strip(),
-            needs_statistical_proof=needs_statistical_proof,
-            primarily_ux_change=primarily_ux_change,
-            tracking_exists=tracking_exists,
-            enough_traffic=enough_traffic,
-            secondary_metrics=secondary_metrics.strip(),
-            target_audience=target_audience.strip(),
-        )
 
-        with st.spinner("Thinking... (~5-15s)"):
-            result_text, err = validate_idea(idea, groq_api_key=_groq_key)
+clicked = st.button("Analyse this idea", type="primary", use_container_width=False, disabled=bool(missing) or not llm_ok)
 
-        if err:
-            st.error(f"LLM error: {err}")
-            st.stop()
+if clicked and not missing:
+    idea = IdeaInput(
+        feature_description=feature_description.strip(),
+        problem_statement=problem_statement.strip(),
+        primary_metric=primary_metric.strip(),
+        needs_statistical_proof=needs_statistical_proof,
+        primarily_ux_change=primarily_ux_change,
+        tracking_exists=tracking_exists,
+        enough_traffic=enough_traffic,
+        secondary_metrics=secondary_metrics.strip(),
+        target_audience=target_audience.strip(),
+    )
 
-        # ── Parse and render ──────────────────────────────────────────────────
-        route = parse_route(result_text)
+    with st.spinner("Thinking... (~5-15s)"):
+        result_text, err = validate_idea(idea, groq_api_key=_groq_key)
 
-        # Route badge
-        route_colors = {
-            "A/B TEST":     ("success", "🧪 A/B TEST"),
-            "USER TEST":    ("warning", "🎯 USER TEST FIRST"),
-            "FEATURE FLAG": ("info",    "🚩 FEATURE FLAG"),
-            "JUST SHIP":    ("info",    "🚀 JUST SHIP IT"),
-        }
+    if err:
+    st.error(f"LLM error: {err}")
+    st.stop()
 
-        if route and route in route_colors:
-            badge_type, badge_label = route_colors[route]
-            getattr(st, badge_type)(f"**Recommendation: {badge_label}**")
-        else:
-            st.info("**Recommendation generated below.**")
+    # ── Parse and render ──────────────────────────────────────────────────
+    route = parse_route(result_text)
 
+    # Route badge
+    route_colors = {
+        "A/B TEST":     ("success", "🧪 A/B TEST"),
+        "USER TEST":    ("warning", "🎯 USER TEST FIRST"),
+        "FEATURE FLAG": ("info",    "🚩 FEATURE FLAG"),
+        "JUST SHIP":    ("info",    "🚀 JUST SHIP IT"),
+    }
+
+    if route and route in route_colors:
+        badge_type, badge_label = route_colors[route]
+        getattr(st, badge_type)(f"**Recommendation: {badge_label}**")
+    else:
+        st.info("**Recommendation generated below.**")
+
+    st.markdown("---")
+
+    # Parse sections and render with styling
+    sections = {
+        "ROUTE":             None,
+        "RATIONALE":         None,
+        "HYPOTHESIS":        None,
+        "EXPERIMENT BRIEF":  None,
+        "PM NOTES":          None,
+        "DESIGNER NOTES":    None,
+        "ENGINEER NOTES":    None,
+    }
+
+    current_section = None
+    buffer = []
+
+    for line in result_text.split("\n"):
+        stripped = line.strip()
+        matched = False
+        for key in sections:
+            if stripped.upper().startswith(key + ":"):
+                if current_section and buffer:
+                    sections[current_section] = "\n".join(buffer).strip()
+                current_section = key
+                rest = stripped[len(key) + 1:].strip()
+                buffer = [rest] if rest else []
+                matched = True
+                break
+        if not matched and current_section:
+            buffer.append(line)
+
+    if current_section and buffer:
+        sections[current_section] = "\n".join(buffer).strip()
+
+    # Render each section
+    if sections["RATIONALE"] and sections["RATIONALE"] != "N/A":
+        st.markdown(f"**Why:** {sections['RATIONALE']}")
+
+    if route == "A/B TEST":
+        if sections["HYPOTHESIS"] and sections["HYPOTHESIS"] != "N/A":
+            st.info(f"**Hypothesis:** {sections['HYPOTHESIS']}")
+
+        if sections["EXPERIMENT BRIEF"] and sections["EXPERIMENT BRIEF"] != "N/A":
+            st.markdown("### Experiment brief")
+            st.markdown(sections["EXPERIMENT BRIEF"])
+
+    col_pm, col_design, col_eng = st.columns(3)
+
+    with col_pm:
+        st.markdown("#### PM")
+        if sections["PM NOTES"] and sections["PM NOTES"] != "N/A":
+            st.markdown(sections["PM NOTES"])
+
+    with col_design:
+        st.markdown("#### Designer")
+        if sections["DESIGNER NOTES"] and sections["DESIGNER NOTES"] != "N/A":
+            st.markdown(sections["DESIGNER NOTES"])
+
+    with col_eng:
+        st.markdown("#### Engineer")
+        if sections["ENGINEER NOTES"] and sections["ENGINEER NOTES"] != "N/A":
+            st.markdown(sections["ENGINEER NOTES"])
+
+    # ── Section 4: Carry forward to Sample Size ───────────────────────────
+    if route == "A/B TEST":
         st.markdown("---")
+        st.markdown("### Next step")
 
-        # Parse sections and render with styling
-        sections = {
-            "ROUTE":             None,
-            "RATIONALE":         None,
-            "HYPOTHESIS":        None,
-            "EXPERIMENT BRIEF":  None,
-            "PM NOTES":          None,
-            "DESIGNER NOTES":    None,
-            "ENGINEER NOTES":    None,
-        }
+        next_col1, next_col2, next_col3 = st.columns([2, 1, 3])
 
-        current_section = None
-        buffer = []
+        with next_col1:
+            baseline_rate = st.number_input(
+                "Current conversion rate (%)",
+                min_value=0.1,
+                max_value=99.9,
+                value=5.0,
+                step=0.5,
+                help="Your current rate for the primary metric. "
+                     "Check your analytics for the last 30 days.",
+            )
 
-        for line in result_text.split("\n"):
-            stripped = line.strip()
-            matched = False
-            for key in sections:
-                if stripped.upper().startswith(key + ":"):
-                    if current_section and buffer:
-                        sections[current_section] = "\n".join(buffer).strip()
-                    current_section = key
-                    rest = stripped[len(key) + 1:].strip()
-                    buffer = [rest] if rest else []
-                    matched = True
-                    break
-            if not matched and current_section:
-                buffer.append(line)
+        with next_col2:
+            mde_pct = st.number_input(
+                "MDE (%)",
+                min_value=1.0,
+                max_value=50.0,
+                value=10.0,
+                step=1.0,
+                help="Minimum relative lift worth shipping. "
+                     "If 10%: control 5% → you need to see at least 5.5%.",
+            )
 
-        if current_section and buffer:
-            sections[current_section] = "\n".join(buffer).strip()
-
-        # Render each section
-        if sections["RATIONALE"] and sections["RATIONALE"] != "N/A":
-            st.markdown(f"**Why:** {sections['RATIONALE']}")
-
-        if route == "A/B TEST":
-            if sections["HYPOTHESIS"] and sections["HYPOTHESIS"] != "N/A":
-                st.info(f"**Hypothesis:** {sections['HYPOTHESIS']}")
-
-            if sections["EXPERIMENT BRIEF"] and sections["EXPERIMENT BRIEF"] != "N/A":
-                st.markdown("### Experiment brief")
-                st.markdown(sections["EXPERIMENT BRIEF"])
-
-        col_pm, col_design, col_eng = st.columns(3)
-
-        with col_pm:
-            st.markdown("#### PM")
-            if sections["PM NOTES"] and sections["PM NOTES"] != "N/A":
-                st.markdown(sections["PM NOTES"])
-
-        with col_design:
-            st.markdown("#### Designer")
-            if sections["DESIGNER NOTES"] and sections["DESIGNER NOTES"] != "N/A":
-                st.markdown(sections["DESIGNER NOTES"])
-
-        with col_eng:
-            st.markdown("#### Engineer")
-            if sections["ENGINEER NOTES"] and sections["ENGINEER NOTES"] != "N/A":
-                st.markdown(sections["ENGINEER NOTES"])
-
-        # ── Section 4: Carry forward to Sample Size ───────────────────────────
-        if route == "A/B TEST":
-            st.markdown("---")
-            st.markdown("### Next step")
-
-            next_col1, next_col2, next_col3 = st.columns([2, 1, 3])
-
-            with next_col1:
-                baseline_rate = st.number_input(
-                    "Current conversion rate (%)",
-                    min_value=0.1,
-                    max_value=99.9,
-                    value=5.0,
-                    step=0.5,
-                    help="Your current rate for the primary metric. "
-                         "Check your analytics for the last 30 days.",
-                )
-
-            with next_col2:
-                mde_pct = st.number_input(
-                    "MDE (%)",
-                    min_value=1.0,
-                    max_value=50.0,
-                    value=10.0,
-                    step=1.0,
-                    help="Minimum relative lift worth shipping. "
-                         "If 10%: control 5% → you need to see at least 5.5%.",
-                )
-
-            with next_col3:
-                st.markdown("")
-                st.markdown("")
-                if st.button("→ Go to Sample Size Calculator", type="secondary"):
-                    st.session_state["prefill_baseline"] = baseline_rate / 100
-                    st.session_state["prefill_mde"]      = mde_pct / 100
-                    st.session_state["prefill_source"]   = "idea_validator"
-                    st.switch_page("pages/1_Sample_Size.py")
+        with next_col3:
+            st.markdown("")
+            st.markdown("")
+            if st.button("→ Go to Sample Size Calculator", type="secondary"):
+                st.session_state["prefill_baseline"] = baseline_rate / 100
+                st.session_state["prefill_mde"]      = mde_pct / 100
+                st.session_state["prefill_source"]   = "idea_validator"
+                st.switch_page("pages/1_Sample_Size.py")
 
         # Raw output in expander
         with st.expander("Copy raw text"):
