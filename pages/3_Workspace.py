@@ -12,9 +12,15 @@ from utils.doc_generator import generate_brief, generate_results_doc, BRIEF_TEMP
 st.set_page_config(page_title="Workspace", page_icon="🗂️", layout="wide")
 inject_css()
 
-page_header(
-    None, "🗂️", "Workspace",
-    "Experiment briefs, results docs, templates, and your experiment registry — all in one place."
+st.markdown(
+    '<h1 style="font-size:1.9rem;font-weight:800;color:#EFF4FA;'
+    'margin:0 0 0.4rem 0;line-height:1.2;letter-spacing:-0.025em;">🗂️ Workspace</h1>',
+    unsafe_allow_html=True,
+)
+st.markdown(
+    '<p style="color:#8B9CB0;font-size:0.95rem;margin:0 0 1.75rem 0;line-height:1.6;">'
+    'Experiment briefs, results docs, templates, and your experiment registry — all in one place.</p>',
+    unsafe_allow_html=True,
 )
 
 client = get_client()
