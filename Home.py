@@ -47,8 +47,8 @@ CARD = (
     'background:rgba(255,255,255,0.04);'
     'backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);'
     'border:1px solid rgba(255,255,255,0.09);'
-    'border-radius:16px;padding:1.6rem;height:100%;min-height:260px;'
-    'position:relative;isolation:isolate;'
+    'border-radius:16px;padding:1.6rem;min-height:260px;'
+    'position:relative;isolation:isolate;box-sizing:border-box;'
 )
 STEP_LABEL = (
     'font-size:0.68rem;font-weight:700;letter-spacing:0.1em;'
@@ -58,10 +58,8 @@ CARD_ICON  = 'font-size:1.6rem;margin-bottom:0.75rem;'
 CARD_TITLE = 'font-size:1.05rem;font-weight:700;color:#EFF4FA;margin-bottom:0.5rem;'
 CARD_DESC  = 'font-size:0.87rem;color:#8B9CB0;line-height:1.65;'
 
-c0, c1, mid, c2 = st.columns([3, 3, 1, 3])
-
-with c0:
-    st.markdown(f"""
+st.markdown(f"""
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;">
     <div style="{CARD}">
         <div style="{STEP_LABEL}">Step 0</div>
         <div style="{CARD_ICON}">💡</div>
@@ -72,10 +70,6 @@ with c0:
             a full experiment brief for PM, Designer, and Engineer.
         </div>
     </div>
-    """, unsafe_allow_html=True)
-
-with c1:
-    st.markdown(f"""
     <div style="{CARD}">
         <div style="{STEP_LABEL}">Step 1</div>
         <div style="{CARD_ICON}">📐</div>
@@ -86,17 +80,6 @@ with c1:
             every assumption you make.
         </div>
     </div>
-    """, unsafe_allow_html=True)
-
-with mid:
-    st.markdown(
-        '<div style="display:flex;align-items:center;justify-content:center;'
-        'height:100%;color:#4A6070;font-size:1.5rem;padding-top:2rem;">›</div>',
-        unsafe_allow_html=True,
-    )
-
-with c2:
-    st.markdown(f"""
     <div style="{CARD}">
         <div style="{STEP_LABEL}">Step 2</div>
         <div style="{CARD_ICON}">📊</div>
@@ -107,7 +90,8 @@ with c2:
             pre-committed MDE as the actual business gate.
         </div>
     </div>
-    """, unsafe_allow_html=True)
+</div>
+""", unsafe_allow_html=True)
 
 st.markdown("<div style='height:2rem'></div>", unsafe_allow_html=True)
 
