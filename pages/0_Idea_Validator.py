@@ -175,8 +175,8 @@ if clicked and not missing:
         result_text, err = validate_idea(idea, groq_api_key=_groq_key)
 
     if err:
-    st.error(f"LLM error: {err}")
-    st.stop()
+        st.error(f"LLM error: {err}")
+        st.stop()
 
     # ── Parse and render ──────────────────────────────────────────────────
     route = parse_route(result_text)
