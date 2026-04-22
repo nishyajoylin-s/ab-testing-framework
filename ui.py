@@ -5,11 +5,18 @@ Import and call inject_css() as the first thing after st.set_page_config().
 import streamlit as st
 
 _CSS = """<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 /* ── Chrome ────────────────────────────────────────────── */
 #MainMenu { visibility: hidden; }
 footer { visibility: hidden; }
 .stDeployButton { display: none !important; }
+
+/* ── Global base ───────────────────────────────────────── */
+.stApp {
+    background: #060A12 !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
 
 /* ── Layout ────────────────────────────────────────────── */
 .block-container {
@@ -20,46 +27,52 @@ footer { visibility: hidden; }
 
 /* ── Sidebar ───────────────────────────────────────────── */
 [data-testid="stSidebar"] {
-    background: #0b0f1a !important;
-    border-right: 1px solid rgba(255,255,255,0.05) !important;
+    background: rgba(255,255,255,0.04) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-right: 1px solid rgba(255,255,255,0.09) !important;
 }
 [data-testid="stSidebarNavItems"] a {
-    border-radius: 8px !important;
+    border-radius: 10px !important;
     margin: 2px 0 !important;
     padding: 0.45rem 0.75rem !important;
-    transition: background 0.15s !important;
+    transition: background 0.2s !important;
+    color: #8B9CB0 !important;
 }
 [data-testid="stSidebarNavItems"] a:hover {
-    background: rgba(245,197,24,0.08) !important;
+    background: rgba(0,201,177,0.08) !important;
+    color: #EFF4FA !important;
 }
 [data-testid="stSidebarNavItems"] [aria-current="page"] {
-    background: rgba(245,197,24,0.12) !important;
-    color: #f5c518 !important;
+    background: rgba(0,201,177,0.12) !important;
+    color: #00C9B1 !important;
     font-weight: 600 !important;
 }
 
 /* ── Metric cards ──────────────────────────────────────── */
 [data-testid="stMetric"] {
-    background: #131929 !important;
-    border: 1px solid rgba(255,255,255,0.07) !important;
-    border-radius: 10px !important;
+    background: rgba(255,255,255,0.04) !important;
+    backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255,255,255,0.09) !important;
+    border-radius: 16px !important;
     padding: 1rem 1.25rem !important;
-    transition: border-color 0.2s !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
 }
 [data-testid="stMetric"]:hover {
-    border-color: rgba(245,197,24,0.2) !important;
+    border-color: rgba(0,201,177,0.35) !important;
+    box-shadow: 0 0 28px rgba(0,201,177,0.12) !important;
 }
 [data-testid="stMetricLabel"] > div {
-    color: #6b7fa3 !important;
+    color: #8B9CB0 !important;
     font-size: 0.72rem !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.07em !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.1em !important;
     text-transform: uppercase !important;
 }
 [data-testid="stMetricValue"] {
     font-size: 1.5rem !important;
-    font-weight: 700 !important;
-    color: #f1f5f9 !important;
+    font-weight: 800 !important;
+    color: #EFF4FA !important;
 }
 [data-testid="stMetricDelta"] {
     font-size: 0.82rem !important;
@@ -67,78 +80,86 @@ footer { visibility: hidden; }
 
 /* ── Buttons ───────────────────────────────────────────── */
 .stButton > button[kind="primary"] {
-    background: #f5c518 !important;
-    color: #0a0e1a !important;
+    background: linear-gradient(135deg, #00C9B1, #00AAFF) !important;
+    color: #060A12 !important;
     border: none !important;
     font-weight: 700 !important;
-    border-radius: 8px !important;
+    border-radius: 10px !important;
     padding: 0.5rem 1.75rem !important;
     font-size: 0.9rem !important;
     letter-spacing: 0.01em !important;
-    transition: all 0.18s ease !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 0 20px rgba(0,201,177,0.2) !important;
 }
 .stButton > button[kind="primary"]:hover {
-    background: #ffd740 !important;
+    box-shadow: 0 0 28px rgba(0,201,177,0.35) !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 4px 16px rgba(245,197,24,0.25) !important;
 }
 .stButton > button[kind="secondary"] {
-    border-color: rgba(255,255,255,0.1) !important;
-    border-radius: 8px !important;
-    transition: all 0.18s ease !important;
+    background: rgba(255,255,255,0.07) !important;
+    border-color: rgba(255,255,255,0.09) !important;
+    border-radius: 10px !important;
+    color: #EFF4FA !important;
+    transition: all 0.2s ease !important;
 }
 .stButton > button[kind="secondary"]:hover {
-    border-color: rgba(245,197,24,0.4) !important;
-    color: #f5c518 !important;
+    background: rgba(255,255,255,0.10) !important;
+    border-color: rgba(0,201,177,0.35) !important;
+    color: #00C9B1 !important;
 }
 
 /* ── Alerts ────────────────────────────────────────────── */
 [data-testid="stAlert"] {
-    border-radius: 8px !important;
+    border-radius: 10px !important;
     border-left-width: 3px !important;
+    backdrop-filter: blur(8px) !important;
 }
 
 /* ── Expander ──────────────────────────────────────────── */
 [data-testid="stExpander"] {
-    border: 1px solid rgba(255,255,255,0.07) !important;
+    background: rgba(255,255,255,0.04) !important;
+    border: 1px solid rgba(255,255,255,0.09) !important;
     border-radius: 10px !important;
     overflow: hidden !important;
 }
 [data-testid="stExpander"]:hover {
-    border-color: rgba(255,255,255,0.12) !important;
+    border-color: rgba(0,201,177,0.25) !important;
 }
 
 /* ── Inputs ────────────────────────────────────────────── */
 [data-testid="stNumberInput"] input,
 [data-testid="stTextInput"] input {
-    border-radius: 7px !important;
-    border-color: rgba(255,255,255,0.1) !important;
-    background: #131929 !important;
-    transition: border-color 0.15s !important;
+    border-radius: 10px !important;
+    border-color: rgba(255,255,255,0.09) !important;
+    background: rgba(255,255,255,0.04) !important;
+    color: #EFF4FA !important;
+    transition: border-color 0.2s !important;
 }
 [data-testid="stNumberInput"] input:focus,
 [data-testid="stTextInput"] input:focus {
-    border-color: rgba(245,197,24,0.4) !important;
-    box-shadow: 0 0 0 1px rgba(245,197,24,0.15) !important;
+    border-color: #00C9B1 !important;
+    box-shadow: 0 0 0 3px rgba(0,201,177,0.12) !important;
 }
 [data-testid="stTextArea"] textarea {
-    border-radius: 7px !important;
-    border-color: rgba(255,255,255,0.1) !important;
-    background: #131929 !important;
+    border-radius: 10px !important;
+    border-color: rgba(255,255,255,0.09) !important;
+    background: rgba(255,255,255,0.04) !important;
+    color: #EFF4FA !important;
 }
 [data-testid="stTextArea"] textarea:focus {
-    border-color: rgba(245,197,24,0.4) !important;
+    border-color: #00C9B1 !important;
+    box-shadow: 0 0 0 3px rgba(0,201,177,0.12) !important;
 }
 
 /* ── Select / Slider ───────────────────────────────────── */
 [data-testid="stSelectSlider"] > div > div {
-    border-radius: 7px !important;
+    border-radius: 10px !important;
 }
 
 /* ── Divider ───────────────────────────────────────────── */
 hr {
     border: none !important;
-    border-top: 1px solid rgba(255,255,255,0.06) !important;
+    border-top: 1px solid rgba(255,255,255,0.09) !important;
     margin: 1.5rem 0 !important;
 }
 
@@ -158,19 +179,20 @@ hr {
 
 /* ── Charts ────────────────────────────────────────────── */
 [data-testid="stPlotlyChart"] {
-    border-radius: 10px;
+    border-radius: 16px;
     overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.09);
 }
 
 /* ── Scrollbar ─────────────────────────────────────────── */
-::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #2a3550; border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #3d4f6e; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
 
 /* ── Typography ────────────────────────────────────────── */
-h2 { font-weight: 700 !important; color: #f1f5f9 !important; }
-h3 { font-weight: 600 !important; color: #e2e8f0 !important; }
+h2 { font-weight: 700 !important; color: #EFF4FA !important; }
+h3 { font-weight: 600 !important; color: #EFF4FA !important; }
 
 /* ── Step progress component ───────────────────────────── */
 .step-progress {
@@ -181,33 +203,35 @@ h3 { font-weight: 600 !important; color: #e2e8f0 !important; }
     flex-wrap: wrap;
 }
 .step-pill {
-    border-radius: 6px;
-    padding: 4px 12px;
+    border-radius: 9999px;
+    padding: 4px 14px;
     font-size: 0.75rem;
     font-weight: 500;
     letter-spacing: 0.02em;
     white-space: nowrap;
     border: 1px solid;
-    transition: all 0.15s;
+    transition: all 0.2s;
+    backdrop-filter: blur(8px);
 }
 .step-pill-active {
-    background: #f5c518;
-    color: #0a0e1a;
-    border-color: #f5c518;
+    background: linear-gradient(135deg, #00C9B1, #00AAFF);
+    color: #060A12;
+    border-color: transparent;
     font-weight: 700;
+    box-shadow: 0 0 16px rgba(0,201,177,0.3);
 }
 .step-pill-done {
-    background: rgba(245,197,24,0.08);
-    color: #a89030;
-    border-color: rgba(245,197,24,0.2);
+    background: rgba(0,201,177,0.08);
+    color: #00C9B1;
+    border-color: rgba(0,201,177,0.2);
 }
 .step-pill-muted {
     background: transparent;
-    color: #2a3550;
-    border-color: #1a2540;
+    color: #4A6070;
+    border-color: rgba(255,255,255,0.09);
 }
 .step-arrow {
-    color: #1e2d4a;
+    color: #4A6070;
     font-size: 0.85rem;
     user-select: none;
 }
@@ -220,22 +244,23 @@ h3 { font-weight: 600 !important; color: #e2e8f0 !important; }
     margin-top: 1rem;
 }
 .verdict-block {
-    background: #131929;
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 16px;
     padding: 1.25rem;
 }
 .verdict-block-label {
     font-size: 0.7rem;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #6b7fa3;
+    color: #8B9CB0;
     margin-bottom: 0.6rem;
 }
 .verdict-block-text {
     font-size: 0.9rem;
-    color: #c8d3e8;
+    color: #EFF4FA;
     line-height: 1.65;
 }
 
@@ -272,12 +297,12 @@ def step_indicator(current: int):
 def page_header(step: int, icon: str, title: str, subtitle: str):
     step_indicator(step)
     st.markdown(
-        f'<h1 style="font-size:1.9rem;font-weight:800;color:#f1f5f9;'
-        f'margin:0 0 0.4rem 0;line-height:1.2;">{icon} {title}</h1>',
+        f'<h1 style="font-size:1.9rem;font-weight:800;color:#EFF4FA;'
+        f'margin:0 0 0.4rem 0;line-height:1.2;letter-spacing:-0.025em;">{icon} {title}</h1>',
         unsafe_allow_html=True,
     )
     st.markdown(
-        f'<p style="color:#6b7fa3;font-size:0.95rem;margin:0 0 1.75rem 0;'
+        f'<p style="color:#8B9CB0;font-size:0.95rem;margin:0 0 1.75rem 0;'
         f'line-height:1.6;">{subtitle}</p>',
         unsafe_allow_html=True,
     )

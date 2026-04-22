@@ -20,8 +20,8 @@ st.set_page_config(page_title="Sample Size Calculator", page_icon="📐", layout
 
 inject_css()
 
-DARK = dict(plot_bgcolor="#0b0f1a", paper_bgcolor="#0b0f1a", font_color="#c8d3e8",
-            font=dict(family="sans-serif"))
+DARK = dict(plot_bgcolor="#060A12", paper_bgcolor="#060A12", font_color="#EFF4FA",
+            font=dict(family="Inter, sans-serif"))
 
 page_header(
     1, "📐", "Sample Size Calculator",
@@ -210,7 +210,7 @@ Z_β cuts off the bottom {100-power_pct}%.)*
             ys = [c["n_per_variant"] for c in curve]
 
             fig1 = go.Figure(go.Scatter(x=xs, y=ys, mode="lines+markers",
-                line=dict(color="#f5c518", width=2), marker=dict(size=5)))
+                line=dict(color="#00C9B1", width=2), marker=dict(size=5, color="#00C9B1")))
             # Mark current selection
             current_x = mde * (100 if mde_kind == "relative" else 100)
             fig1.add_vline(x=current_x, line=dict(color="#e74c3c", dash="dash", width=1.5))

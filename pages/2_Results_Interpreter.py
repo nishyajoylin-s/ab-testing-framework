@@ -26,8 +26,8 @@ st.set_page_config(page_title="Results Interpreter", page_icon="📊", layout="w
 
 inject_css()
 
-DARK = dict(plot_bgcolor="#0b0f1a", paper_bgcolor="#0b0f1a", font_color="#c8d3e8",
-            font=dict(family="sans-serif"))
+DARK = dict(plot_bgcolor="#060A12", paper_bgcolor="#060A12", font_color="#EFF4FA",
+            font=dict(family="Inter, sans-serif"))
 
 page_header(
     2, "📊", "Results Interpreter",
@@ -261,11 +261,11 @@ with b_left:
 
     fig_post = go.Figure()
     fig_post.add_trace(go.Scatter(x=x, y=y_c, mode="lines", name="Control",
-        fill="tozeroy", fillcolor="rgba(23,190,207,0.2)",
-        line=dict(color="#17becf", width=2)))
+        fill="tozeroy", fillcolor="rgba(0,170,255,0.15)",
+        line=dict(color="#00AAFF", width=2)))
     fig_post.add_trace(go.Scatter(x=x, y=y_v, mode="lines", name="Variant",
-        fill="tozeroy", fillcolor="rgba(245,197,24,0.2)",
-        line=dict(color="#f5c518", width=2)))
+        fill="tozeroy", fillcolor="rgba(0,201,177,0.15)",
+        line=dict(color="#00C9B1", width=2)))
     fig_post.update_layout(
         **DARK, height=260, margin=dict(l=0, r=0, t=30, b=0),
         xaxis=dict(title="Conversion rate", tickformat=".1%"),
@@ -347,39 +347,41 @@ _DECISION_STYLES = {
     "INVALIDATE":  ("🚨", "#ef4444", "rgba(239,68,68,0.1)",   "rgba(239,68,68,0.25)"),
 }
 icon, color, bg, border_color = _DECISION_STYLES.get(
-    verdict.decision, ("●", "#6b7fa3", "rgba(107,127,163,0.1)", "rgba(107,127,163,0.25)")
+    verdict.decision, ("●", "#8B9CB0", "rgba(139,156,176,0.08)", "rgba(139,156,176,0.2)")
 )
 
 st.markdown(f"""
-<div style="background:{bg};border:1px solid {border_color};border-radius:12px;
-            padding:1.4rem 1.6rem;margin-bottom:1rem;">
+<div style="background:{bg};border:1px solid {border_color};border-radius:16px;
+            backdrop-filter:blur(16px);padding:1.4rem 1.6rem;margin-bottom:1rem;">
     <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;
                 text-transform:uppercase;color:{color};margin-bottom:0.5rem;">
         {icon} Decision
     </div>
-    <div style="font-size:1.1rem;font-weight:700;color:#f1f5f9;line-height:1.4;">
+    <div style="font-size:1.1rem;font-weight:700;color:#EFF4FA;line-height:1.4;">
         {verdict.decision} · {verdict.headline}
     </div>
 </div>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-    <div style="background:#131929;border:1px solid rgba(255,255,255,0.07);
-                border-radius:10px;padding:1.25rem;">
-        <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;
-                    text-transform:uppercase;color:#6b7fa3;margin-bottom:0.6rem;">
+    <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(16px);
+                border:1px solid rgba(255,255,255,0.09);
+                border-radius:16px;padding:1.25rem;">
+        <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;
+                    text-transform:uppercase;color:#8B9CB0;margin-bottom:0.6rem;">
             What happened
         </div>
-        <div style="font-size:0.88rem;color:#c8d3e8;line-height:1.65;">
+        <div style="font-size:0.88rem;color:#EFF4FA;line-height:1.65;">
             {verdict.what_happened}
         </div>
     </div>
-    <div style="background:#131929;border:1px solid rgba(255,255,255,0.07);
-                border-radius:10px;padding:1.25rem;">
-        <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;
-                    text-transform:uppercase;color:#6b7fa3;margin-bottom:0.6rem;">
+    <div style="background:rgba(255,255,255,0.04);backdrop-filter:blur(16px);
+                border:1px solid rgba(255,255,255,0.09);
+                border-radius:16px;padding:1.25rem;">
+        <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;
+                    text-transform:uppercase;color:#8B9CB0;margin-bottom:0.6rem;">
             Watch out for
         </div>
-        <div style="font-size:0.88rem;color:#c8d3e8;line-height:1.65;">
+        <div style="font-size:0.88rem;color:#EFF4FA;line-height:1.65;">
             {verdict.watch_out_for}
         </div>
     </div>
