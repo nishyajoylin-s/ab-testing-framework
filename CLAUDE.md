@@ -21,16 +21,20 @@ ab-testing-framework/
 ├── pages/
 │   ├── 0_Idea_Validator.py
 │   ├── 1_Sample_Size.py
-│   └── 2_Results_Interpreter.py
+│   ├── 2_Results_Interpreter.py
+│   └── 3_Workspace.py    ← experiment registry, brief/results doc generator, templates (Supabase optional)
 ├── stats/
 │   ├── __init__.py
 │   ├── sample_size.py    ← power analysis math
 │   ├── frequentist.py    ← two-proportion z-test, SRM check
 │   └── bayesian.py       ← Beta-Binomial conjugate model
-└── llm/
-    ├── __init__.py
-    ├── idea_validator.py ← routing engine
-    └── verdict.py        ← results verdict layer
+├── llm/
+│   ├── __init__.py
+│   ├── idea_validator.py ← routing engine
+│   └── verdict.py        ← results verdict layer
+└── utils/
+    ├── supabase_client.py ← Supabase client with graceful degradation
+    └── doc_generator.py   ← Markdown brief/results doc templates
 ```
 
 ---
@@ -84,6 +88,16 @@ streamlit run Home.py
 ```
 
 The statistical modules work without Ollama. `llm/verdict.py` exposes `check_ollama_available()` — the UI degrades gracefully when Ollama is not running.
+
+---
+
+## Supabase (optional)
+
+The Workspace page (`pages/3_Workspace.py`) persists experiments via Supabase. `utils/supabase_client.py` handles the client and exposes `get_client()` — returns `None` when Supabase is not configured, and every caller degrades gracefully (the UI shows a warning banner but remains fully functional).
+
+To enable: create `.streamlit/secrets.toml` with `SUPABASE_URL` and `SUPABASE_KEY`. The required table schema is in `README.md`.
+
+Without Supabase, the Workspace still generates and exports briefs and results docs as Markdown — only registry persistence is unavailable.
 
 ---
 
